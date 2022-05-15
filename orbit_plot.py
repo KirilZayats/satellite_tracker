@@ -1,17 +1,18 @@
 # Useful for defining quantities
 from astropy import units as u
 
+from poliastro.twobody import Orbit
+
 # Earth focused modules, ISS example orbit and time span generator
 from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
-from poliastro.examples import iss
 from poliastro.util import time_range
 
 
-def get_orbit_plot(orbit):
+def get_orbit_plot(orbit:Orbit):
     # Build spacecraft instance
     satellite_spacecraft = EarthSatellite(orbit, None)
-    t_span = time_range(orbit.epoch - 1.5 * u.h, periods=150, end=orbit.epoch + 1.5 * u.h)
+    t_span = time_range(start = orbit.epoch - 1.5 * u.h, periods=150, end = orbit.epoch + 1.5 * u.h)
     # Generate an instance of the plotter, add title and show latlon grid
     gp = GroundtrackPlotter()
     gp.update_layout(title="International Space Station groundtrack")
@@ -28,7 +29,7 @@ def get_orbit_plot(orbit):
     import plotly.graph_objects as go
 
     # Minsk coordinates
-    STATION = [53.893009, 27.567444] * u.deg
+    STATION = [53.9,27.56667] * u.deg
 
     # Let us add a new trace in original figure
     gp.add_trace(
