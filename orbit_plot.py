@@ -28,15 +28,15 @@ def get_orbit_plot(orbit:Orbit):
     # For building geo traces
     import plotly.graph_objects as go
 
-    # Minsk coordinates
-    STATION = [53.9,27.56667] * u.deg
+    # Faculty of Radiophysics and Computer Technologies coordinates
+    STATION = [53.83821551524637, 27.476136409973797] * u.deg
 
     # Let us add a new trace in original figure
     gp.add_trace(
         go.Scattergeo(
             lat=STATION[0],
             lon=STATION[-1],
-            name="Minsk",
+            name="Faculty of Radiophysics and Computer Technologies",
             marker={"color": "blue"},
         )
     )
