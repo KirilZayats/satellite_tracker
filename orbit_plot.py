@@ -44,3 +44,4 @@ def get_orbit_plot(orbit:Orbit):
     # Switch to three dimensional representation
     gp.update_geos(projection_type="orthographic")
     gp.fig.show()
+
