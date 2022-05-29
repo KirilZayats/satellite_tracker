@@ -55,10 +55,8 @@ def get_orbit_plot(orbit: Orbit):
             marker={"color": "blue"},
         )
     )
-    gp.fig.show()
     # Switch to three dimensional representation
     gp.update_geos(projection_type="orthographic")
-    gp.fig.show()
 
 
 def get_gp_value():
