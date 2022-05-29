@@ -239,8 +239,7 @@ class Window(QWidget):
 
     @staticmethod
     def get_satellite_info():
-        # satellite_info = satellite_state.get_satellite_info_file()
-        satellite_info = "Should be satellite info here xdxdxdxd"
+        satellite_info = satellite_state.get_satellite_param_string()
         widget = QLabel(satellite_info)
         return widget
 

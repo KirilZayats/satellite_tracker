@@ -12,22 +12,21 @@ def main_default():
     by_name = {sat.name: sat for sat in satellites}
     satellite = by_name['KITSUNE']
     ts = load.timescale()
-    t = ts.now();
+    t = ts.now()
     print(t)
     print(satellite)
-    rTEME, vTEME = get_velocity(satellite, t);
+    rTEME, vTEME = get_velocity(satellite, t)
     print(rTEME, vTEME)
-#    satellite_state.print_in_file_state(t,satellite,rTEME,vTEME)
+    satellite_state.set_satellite_param(t, rTEME, vTEME)
     orbit_vl = orbit.get_orbit(rTEME, vTEME, t)
     orbit_plot.get_orbit_plot(orbit_vl)
 
 
-def main_another(satellite_name):
-    satellites = loader.loadTle()
+def main_another(satellites, satellite_name):
     by_name = {sat.name: sat for sat in satellites}
-    satellite = by_name['satellite_name']
+    satellite = by_name[satellite_name]
     ts = load.timescale()
-    t = ts.now();
+    t = ts.now()
     print(t)
     print(satellite)
     rTEME, vTEME = get_velocity(satellite, t);
