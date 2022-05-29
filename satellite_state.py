@@ -1,10 +1,3 @@
-from numpy import (
-    array, multiply, ndarray
-)
-from skyfield.positionlib import ICRF
-import array
-import math
-
 import skyfield.sgp4lib as rv
 
 satellite_param = []

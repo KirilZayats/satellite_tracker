@@ -9,8 +9,6 @@ from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
 from poliastro.util import time_range
 
-import satellite_state
-
 gp = GroundtrackPlotter()
 
 
