@@ -2,6 +2,10 @@ from dataclasses import dataclass
 from enum import IntEnum, auto
 
 from PySide6.QtCore import QRect, QSize, Qt
+from PySide6.QtCore import QUrl
+from PySide6.QtQml import QQmlApplicationEngine
+from PySide6.QtWidgets import QApplication
+from PySide6.QtWebEngineWidgets import QWebEngineView
 from PySide6.QtWidgets import (
     QApplication,
     QFrame,
@@ -17,6 +21,7 @@ import sys
 
 import runner
 import satellite_state
+from orbit_plot import get_gp_value, build_plot
 
 
 class Position(IntEnum):
@@ -205,14 +210,13 @@ class BorderLayout(QLayout):
         return total_size
 
 
-class Window(QWidget):
+class Window(QWidget, QQmlApplicationEngine):
     def __init__(self):
         super().__init__()
-        self.central_widget = QTextBrowser()
-        self.central_widget.setPlainText("Central widget")
-
         border_layout = BorderLayout()
-        border_layout.addWidget(self.central_widget, Position.Center)
+
+        plot_3d = self.get_3d_lpot()
+        border_layout.addWidget(plot_3d, Position.Center)
 
         satellite_dropdown = self.create_dropdown_satellite()
         border_layout.addWidget(satellite_dropdown, Position.West)
@@ -242,6 +246,14 @@ class Window(QWidget):
         satellite_info = satellite_state.get_satellite_param_string()
         widget = QLabel(satellite_info)
         return widget
+
+    @staticmethod
+    def get_3d_lpot():
+        fig = get_gp_value()
+        html = build_plot(fig)
+        view = QWebEngineView()
+        view.setHtml(html)
+        return view
 
 
 if __name__ == "__main__":
