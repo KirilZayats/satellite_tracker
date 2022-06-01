@@ -5,6 +5,7 @@ from PySide6.QtCore import QRect, QSize, Qt
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWebEngineWidgets import QWebEngineView
+from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import (
     QApplication,
     QFrame,
@@ -15,7 +16,7 @@ from PySide6.QtWidgets import (
     QWidgetItem,
     QMenuBar,
     QListWidget,
-    QTextEdit 
+    QTextEdit
 )
 import sys
 
@@ -254,17 +255,24 @@ class Window(QWidget, QQmlApplicationEngine):
         self.setLayout(self.border_layout)
         self.init_toolbar()
         self.setWindowTitle("Satellite tracker")
+        self.label = QLabel()
+        icon = QPixmap('/main_icon.png')
+        self.label.setPixmap(icon)
+        self.setWindowIcon
        
 
     def init_toolbar(self):
 
-       my_menu = QMenuBar(self)
+       self.my_menu = QMenuBar(self)
 
-       self.change_menu = my_menu.addMenu("Change")     
+       self.change_menu = self.my_menu.addMenu("Change")     
        self.change_menu.addAction("Change Satellite",self.show_window_2)         
 
-       self.change_menu = my_menu.addMenu("passes")     
-       self.change_menu.addAction("Satellite passes for 5 days",self.show_window_3)    
+       self.pass_menu = self.my_menu.addMenu("Passes")     
+       self.pass_menu.addAction("Satellite passes for 5 days",self.show_window_3)  
+       self.border_layout.addWidget(self.my_menu,Position.North)
+        
+
        
     def show_window_2(self):
         self.w2 = Window2()
