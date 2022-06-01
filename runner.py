@@ -12,15 +12,19 @@ from PySide6.QtWidgets import (
     QLayout,
     QLayoutItem,
     QWidget,
-    QComboBox,
     QWidgetItem,
+    QMenuBar,
+    QListWidget,
+    QTextEdit 
 )
 import sys
+
+
 
 import satellite_loader as run
 import satellite_state
 from orbit_plot import get_gp_value, build_plot
-
+import satellite_loader
 
 class Position(IntEnum):
     West = auto()
@@ -207,38 +211,79 @@ class BorderLayout(QLayout):
 
         return total_size
 
+class Window2(QWidget):
+    def __init__(self):
+        super(Window2, self).__init__()
+        self.setWindowTitle('Select satellite')
+        self.sat_list = QListWidget(self)
+        self.setMinimumWidth(250)
+        self.setMinimumHeight(800)
+        sat_nameList = [o.name for o in run.get_satellitesList()]
+        self.sat_list.addItems(sat_nameList)
+        self.sat_list.setMinimumWidth(200)
+        self.sat_list.setMinimumHeight(800)
+        self.sat_list.itemClicked.connect(self.selectionChanged)
+    
+    def selectionChanged(self, item):
+       print("Вы кликнули: {}".format(item.text()))
+       satellite_loader.set_selected_sat(item.text())
 
+       self.close()
+
+class Window3(QWidget):
+     def __init__(self):
+         super(Window3, self).__init__()
+         self.setWindowTitle('Select satellite')
+         self.sat_list = QTextEdit(self)
+         self.sat_list.setText(satellite_state.get_sattelite_passes_above_location_string())
+         self.sat_list.setMinimumWidth(600)
+         self.sat_list.setMinimumHeight(800)       
+        
+       
 class Window(QWidget, QQmlApplicationEngine):
     def __init__(self):
         super().__init__()
-        border_layout = BorderLayout()
+        self.border_layout = BorderLayout()
 
-        plot_3d = self.get_3d_lpot()
-        border_layout.addWidget(plot_3d, Position.Center)
+        self.plot_3d = self.get_3d_lpot()
+        self.border_layout.addWidget(self.plot_3d, Position.Center)
 
-        satellite_dropdown = self.create_dropdown_satellite()
-        border_layout.addWidget(satellite_dropdown, Position.West)
-
-        satellite_info = self.get_satellite_info()
-        border_layout.addWidget(satellite_info, Position.South)
-
-        self.setLayout(border_layout)
-
+        self.satellite_info = self.get_satellite_info()
+        self.border_layout.addWidget(self.satellite_info, Position.South)
+        
+        self.setLayout(self.border_layout)
+        self.init_toolbar()
         self.setWindowTitle("Satellite tracker")
+       
+
+    def init_toolbar(self):
+
+       my_menu = QMenuBar(self)
+
+       self.change_menu = my_menu.addMenu("Change")     
+       self.change_menu.addAction("Change Satellite",self.show_window_2)         
+
+       self.change_menu = my_menu.addMenu("passes")     
+       self.change_menu.addAction("Satellite passes for 5 days",self.show_window_3)    
+       
+    def show_window_2(self):
+        self.w2 = Window2()
+        self.w2.show()
+
+    def update_widg(self):
+        self.border_layout.update()
+    
+    def show_window_3(self):
+        self.w3 = Window3()
+        self.w3.show()
+    
 
     @staticmethod
     def create_label(text: str):
         label = QLabel(text)
         label.setFrameStyle(QFrame.Box | QFrame.Raised)
         return label
-
-    @staticmethod
-    def create_dropdown_satellite():
-        widget = QComboBox()
-
-        widget.addItems(["KITSUNE", "BEESAT", "ITUPSAT"])
-        return widget
-
+  
     @staticmethod
     def get_satellite_info():
         satellite_info = satellite_state.get_satellite_param_string()
@@ -251,7 +296,7 @@ class Window(QWidget, QQmlApplicationEngine):
         html = build_plot(fig)
         view = QWebEngineView()
         view.setHtml(html)
-        return view
+        return view     
 
 
 if __name__ == "__main__":

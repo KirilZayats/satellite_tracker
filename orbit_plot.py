@@ -9,6 +9,8 @@ from poliastro.earth import EarthSatellite
 from poliastro.earth.plotting import GroundtrackPlotter
 from poliastro.util import time_range
 
+import satellite_loader
+
 gp = GroundtrackPlotter()
 
 
@@ -34,7 +36,7 @@ def get_orbit_plot(orbit: Orbit):
     gp.plot(
         satellite_spacecraft,
         t_span,
-        label="Satellite",
+        label= satellite_loader._selected_sat,
         color="red",
         marker={"size": 10, "symbol": "triangle-right", "line": {"width": 1, "color": "black"}},
     )
@@ -49,7 +51,7 @@ def get_orbit_plot(orbit: Orbit):
         go.Scattergeo(
             lat=STATION[0],
             lon=STATION[-1],
-            name="Faculty of Radiophysics and Computer Technologies",
+            name="FRCT",
             marker={"color": "blue"},
         )
     )
