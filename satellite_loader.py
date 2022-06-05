@@ -5,7 +5,7 @@ from satellite_state import get_velocity,sattelite_passes_above_location
 import loader
 import orbit
 import orbit_plot
-
+import db_proces
 
 
 _selected_sat = "CUBEBUG-2 (LO-74)"
@@ -21,8 +21,9 @@ def get_satellitesList():
 
 def main_default():
     satellites = get_satellitesList()
+    #db_proces.add_data(satellites)
     by_name = {sat.name: sat for sat in satellites}
-    satellite = by_name[_selected_sat]
+    satellite = by_name[_selected_sat]   
     ts = load.timescale()
     t = ts.now()
     print(t)
@@ -31,7 +32,7 @@ def main_default():
     print(rTEME, vTEME)
     STATION = [53.83821551524637, 27.476136409973797] 
     satellite_state.set_satellite_param(t, rTEME, vTEME)
-    satellite_state.set_matrixToStr(sattelite_passes_above_location(satellite,STATION,t))
+    satellite_state.set_matrixToStr(sattelite_passes_above_location(satellite,STATION,t,5))
     orbit_vl = orbit.get_orbit(rTEME, vTEME, t)
     orbit_plot.get_orbit_plot(orbit_vl)
 

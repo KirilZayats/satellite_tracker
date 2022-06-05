@@ -1,11 +1,16 @@
 from dataclasses import dataclass
 from enum import IntEnum, auto
+from rlcompleter import Completer
+import os
+from dotenv import load_dotenv
 
-from PySide6.QtCore import QRect, QSize, Qt
+from PySide6.QtCore import *
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtWidgets import QApplication
 from PySide6.QtWebEngineWidgets import QWebEngineView
-from PySide6.QtGui import QPixmap
+from PySide6.QtGui import *
+import PySide6.QtWebEngineWidgets
+from PySide6.QtSql import QSqlDatabase, QSqlQuery, QSqlTableModel, QSqlQueryModel
 from PySide6.QtWidgets import (
     QApplication,
     QFrame,
@@ -16,10 +21,17 @@ from PySide6.QtWidgets import (
     QWidgetItem,
     QMenuBar,
     QListWidget,
-    QTextEdit
+    QTextEdit,
+    QLineEdit,
+    QDateTimeEdit,
+    QCompleter,
+    QInputDialog,  
+    QTableView 
 )
-import sys
 
+from PySide6.QtWidgets import *
+import geocoder
+import sys
 
 
 import satellite_loader as run
@@ -216,14 +228,20 @@ class Window2(QWidget):
     def __init__(self):
         super(Window2, self).__init__()
         self.setWindowTitle('Select satellite')
-        self.sat_list = QListWidget(self)
+        self.border_layout = BorderLayout()
+        line_edit = QLineEdit(self)
+        #self.sat_list = QListWidget(self)
         self.setMinimumWidth(250)
         self.setMinimumHeight(800)
         sat_nameList = [o.name for o in run.get_satellitesList()]
-        self.sat_list.addItems(sat_nameList)
-        self.sat_list.setMinimumWidth(200)
-        self.sat_list.setMinimumHeight(800)
-        self.sat_list.itemClicked.connect(self.selectionChanged)
+        completer = QCompleter(sat_nameList,line_edit)
+        line_edit.setCompleter(completer)
+        line_edit.setMinimumWidth(50)
+        #self.sat_list.addItems(sat_nameList)
+        #self.sat_list.setMinimumWidth(200)
+        #self.sat_list.setMinimumHeight(800)
+        self.border_layout.addWidget(line_edit,Position.North)        
+        #self.sat_list.itemClicked.connect(self.selectionChanged)
     
     def selectionChanged(self, item):
        print("Вы кликнули: {}".format(item.text()))
@@ -231,6 +249,98 @@ class Window2(QWidget):
 
        self.close()
 
+class Window4(QWidget):
+     def __init__(self):
+         super(Window4, self).__init__()
+         self.border_loyout = BorderLayout()
+         self.setWindowTitle('Create process data')
+         self.setFixedHeight(600)
+         self.setFixedWidth(900)
+        #  self.setStyleSheet("background:rgb(47, 150, 171)")
+        #  self.inputLoc = QInputDialog()
+        #  location,ok =self.inputLoc.getText(self, "Location and time",
+                                    #  "Location:", QLineEdit.Normal)         
+            #  
+        #  if ok  and location:   
+        #    print(geocoder.get_location(location))
+        #  self.border_loyout.addWidget(self.inputLoc,Position.West)
+         self.location = QLineEdit(self)
+         self.time = QDateTimeEdit(self)  
+         self.button = QPushButton("Get passe")
+
+         self.border_loyout.addWidget(self.time,Position.North)
+         self.border_loyout.addWidget(self.location,Position.North)
+         self.border_loyout.addWidget(self.button,Position.South)
+
+         self.button.clicked.connect(self.get_passes)
+         self.setLayout(self.border_loyout)
+
+     def get_passes(self):
+         sats = satellite_state.get_all_passese_satellites(geocoder.get_location(self.location.text()),self.time)
+         print(sats)
+         self.sat_list = QTextEdit(self)
+         self.sat_list.setText(sats)        
+         self.sat_list.setMinimumWidth(600)
+         self.sat_list.setMinimumHeight(800)    
+         self.border_loyout.addWidget(self.sat_list,Position.Center)   
+
+         #self.border_layout.addWidget(time,Position.East)
+#          db = QSqlDatabase.addDatabase('QSQLITE')
+#          dotenv_path = os.path.join(os.path.dirname(__file__), 'pyth.env')
+#          if os.path.exists(dotenv_path):
+#              load_dotenv(dotenv_path)
+#          db_name = os.getenv('bd_tle_NORAD_country')
+#          db.setDatabaseName(db_name)
+#          db.open()
+#          self.model = QSqlTableModel(self)
+#          self.model.setTable("SATELLITES")
+#          self.model.select()
+#          self.centralwidget = QWidget(self)
+#          sizePolicy = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+#          sizePolicy.setHorizontalStretch(0)
+#          sizePolicy.setVerticalStretch(0)
+#          sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
+#          self.centralwidget.setSizePolicy(sizePolicy)
+#          self.centralwidget.setObjectName("centralwidget")
+#          self.frame = QFrame(self.centralwidget)
+#          self.frame.setEnabled(True)
+#          self.frame.setGeometry(QRect(0, 0, 901, 901))
+#          self.frame.setStyleSheet("border: 4px solid \'#FFFFFF\';\n"
+#                                   "border-radius: 15px;\n"
+#                                   "margin: 10px;\n"
+#                                   "background: #FFFFFF")
+#          self.frame.setFrameShape(QFrame.StyledPanel)
+#          self.frame.setFrameShadow(QFrame.Raised)
+#          self.frame.setObjectName("frame")
+#          self.horizontalLayoutWidget = QWidget(self.frame)
+#          self.horizontalLayoutWidget.setGeometry(QRect(20, 20, 861, 71))
+#          self.horizontalLayoutWidget.setObjectName("horizontalLayoutWidget")
+#          self.horizontalLayout = QHBoxLayout(self.horizontalLayoutWidget)
+#          self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+#          self.horizontalLayout.setObjectName("horizontalLayout")
+                 
+         
+# #         self.tableWidget = QtWidgets.QTableWidget(self.frame)
+#          self.tableWidget = QTableView(self.frame)                # QTableView  !!!
+         
+#          self.tableWidget.setGeometry(QRect(40, 220, 830, 351))
+#          self.tableWidget.setMinimumSize(QSize(830, 351))
+#          self.tableWidget.setMaximumSize(QSize(811, 351))
+#          self.tableWidget.setStyleSheet("border: 4px solid \'#2DACEB\';\n"
+#                                         "border-radius: 15px;\n"
+#                                         "margin: 10px;\n"
+#                                         "background: #FFFFFF")
+#          self.tableWidget.setObjectName("tableWidget")
+# #         self.tableWidget.setColumnCount(0)
+# #         self.tableWidget.setRowCount(0)
+         
+#          QMetaObject.connectSlotsByName(self)
+ 
+#          self.tableWidget = QTableView(self.frame)  
+#          self.tableWidget.setModel(self.model)
+
+         
+        
 class Window3(QWidget):
      def __init__(self):
          super(Window3, self).__init__()
@@ -245,10 +355,11 @@ class Window(QWidget, QQmlApplicationEngine):
     def __init__(self):
         super().__init__()
         self.border_layout = BorderLayout()
-
-        self.plot_3d = self.get_3d_lpot()
-        self.border_layout.addWidget(self.plot_3d, Position.Center)
-
+        self.page = QWebEngineView()
+        self.page.setUrl("https://celestrak.com/cesium/pass-viz-beta.php?source=CelesTrak&tle=/pub/TLE/catalog.txt&satcat=/pub/satcat.txt#visualization/orbit")
+        #self.plot_3d = self.get_3d_lpot()
+        #self.border_layout.addWidget(self.plot_3d, Position.Center)
+        self.border_layout.addWidget(self.page,Position.Center)
         self.satellite_info = self.get_satellite_info()
         self.border_layout.addWidget(self.satellite_info, Position.South)
         
@@ -258,8 +369,7 @@ class Window(QWidget, QQmlApplicationEngine):
         self.label = QLabel()
         icon = QPixmap('/main_icon.png')
         self.label.setPixmap(icon)
-        self.setWindowIcon
-       
+               
 
     def init_toolbar(self):
 
@@ -270,6 +380,10 @@ class Window(QWidget, QQmlApplicationEngine):
 
        self.pass_menu = self.my_menu.addMenu("Passes")     
        self.pass_menu.addAction("Satellite passes for 5 days",self.show_window_3)  
+        
+       self.create_pass = self.my_menu.addMenu("Create passes")     
+       self.create_pass.addAction("Create dattelites passes list",self.show_window_4)  
+
        self.border_layout.addWidget(self.my_menu,Position.North)
         
 
@@ -284,7 +398,10 @@ class Window(QWidget, QQmlApplicationEngine):
     def show_window_3(self):
         self.w3 = Window3()
         self.w3.show()
-    
+
+    def show_window_4(self):
+        self.w4 = Window4()
+        self.w4.show()    
 
     @staticmethod
     def create_label(text: str):
