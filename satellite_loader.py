@@ -21,7 +21,7 @@ def get_satellitesList():
 
 def main_default():
     satellites = get_satellitesList()
-    #db_proces.add_data(satellites)
+    db_proces.add_data(satellites)
     by_name = {sat.name: sat for sat in satellites}
     satellite = by_name[_selected_sat]   
     ts = load.timescale()

@@ -33,7 +33,7 @@ def add_data(satellites: list):
     sql = 'INSERT INTO SATELLITES (NAME, NORAD, COUNTRY) values(?, ?, ?)'
     bd_map = []
     for i in range (len(satellites)):
-        bd_map.append((satellites[i].name,satellites[i].model.satnum,requests_country.get_country(satellites[i].name)))
+        bd_map.append((satellites[i].name,satellites[i].model.satnum,requests_country.get_country(satellites[i].model.satnum)))
     
     with con:
         con.executemany(sql,bd_map)
